@@ -3,7 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 public class TerrainGenerator {
 
-    public static Mesh GenerateTerrainMesh(int sizeX, int sizeY, float[,] noiseMap) {
+    public static Mesh GenerateTerrainMesh(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail = 1) {
         Mesh mesh = new Mesh();
 
         List<Vector3> vectices;
