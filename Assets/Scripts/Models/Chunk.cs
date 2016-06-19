@@ -24,6 +24,21 @@ public class Chunk {
     public ChunkData GetChunkData() {
         return new ChunkData(_worldData,Position,LevelOfDetail);
     }
+
+    public bool IsActive() {
+        return _chunkGameObject.activeSelf;
+    }
+
+    public void UpdateChunk(int levelOfDetail) {
+        if (levelOfDetail != this.LevelOfDetail) {
+            this.LevelOfDetail = levelOfDetail;
+            //TODO LOD
+            Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseMap);
+            _chunkGameObject.GetComponent<ChunkController>().SetMesh(mesh);
+        }
+        if(!IsActive())
+            _chunkGameObject.SetActive(true);
+    }
 }
 
 public struct ChunkData {

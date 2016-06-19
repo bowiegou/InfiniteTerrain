@@ -66,6 +66,10 @@ public class TerrainGenerator {
         mesh.triangles = triangles;
         mesh.SetUVs(0, uvs);
 
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
+        mesh.Optimize();
+
 
         
         

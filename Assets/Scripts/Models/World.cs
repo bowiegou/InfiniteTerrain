@@ -23,16 +23,39 @@ public class World {
         _chunkPrefab = data.TerrainController.ChunkPrefab;
     }
 
-    public void BuildChunk(Vector2 position) {
-        NoiseConfig NoiseData = new NoiseConfig(_worldData.NoiseScale, _worldData.NoiseSeed,
-                                        _worldData.NoiseOctaves, _worldData.NoisePersistance, _worldData.NoiseLacunarity);
-        //TODO:offset
-        float[,] NoiseMap = NoiseGenerator.GenerateNoise(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseData, 0, 0);
-        Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseMap);
-        GameObject o = (GameObject)GameObject.Instantiate(_chunkPrefab, position, Quaternion.identity);
-        o.SetActive(true);
-        o.GetComponent<ChunkController>().SetMesh(mesh);
-        o.transform.parent = _worldData.TerrainController.transform;
+    public Vector2 getChunkIndex(Vector2 worldPosition) {
+        return new Vector2(Mathf.Floor(worldPosition.x/_worldData.ChunkSizeX), Mathf.Floor(worldPosition.y/_worldData.ChunkSizeY));
+
+        
+    }
+
+
+    public void BuildChunk(Vector2 position, int levelOfDetail) {
+        Vector2 chunkIndex = getChunkIndex(position);
+        Chunk chunk;
+
+        if (!_chunksDictionary.TryGetValue(chunkIndex, out chunk)) {
+
+            NoiseConfig NoiseData = new NoiseConfig(_worldData.NoiseScale, _worldData.NoiseSeed,
+                _worldData.NoiseOctaves, _worldData.NoisePersistance, _worldData.NoiseLacunarity);
+            //TODO:offset
+            float[,] NoiseMap = NoiseGenerator.GenerateNoise(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseData,
+                chunkIndex.x, chunkIndex.y);
+            Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseMap);
+            GameObject o = (GameObject) GameObject.Instantiate(_chunkPrefab, position, Quaternion.identity);
+            o.SetActive(true);
+            o.GetComponent<ChunkController>().SetMesh(mesh);
+            o.transform.parent = _worldData.TerrainController.transform;
+
+            chunk = new Chunk(o, new ChunkData(_worldData, position, levelOfDetail));
+
+            _chunksDictionary.Add(chunkIndex, chunk);
+        }
+        else {
+
+            chunk.UpdateChunk(levelOfDetail);
+        }
+
     }
 
 
