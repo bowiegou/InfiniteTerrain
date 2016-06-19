@@ -15,15 +15,18 @@ public class ChunkController : MonoBehaviour {
 
 	}
 
-    void getMeshComponents() {
+    void GetMeshComponents() {
         _meshFilter = GetComponent<MeshFilter>();
         _meshCollider = GetComponent<MeshCollider>();
         _meshRenderer = GetComponent<MeshRenderer>();
     }
 
-    public void setMesh(Mesh mesh) {
+    public void SetMesh(Mesh mesh) {
         if(_meshFilter == null || _meshCollider == null)
-            getMeshComponents();
+            GetMeshComponents();
+        mesh.RecalculateBounds();
+        mesh.RecalculateNormals();
+        mesh.Optimize();
         _meshFilter.mesh = mesh;
         _meshCollider.sharedMesh = mesh;
     }

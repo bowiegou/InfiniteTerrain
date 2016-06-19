@@ -3,35 +3,27 @@ using System.Collections;
 
 public class TerrainController : MonoBehaviour {
 
-    public NoiseConfig NoiseData;
+    public NoiseConfig DebugNoiseData;
 
     public bool UpdateInRealTime;
 
-    public int SizeX;
-    public int SizeY;
-
-    public float OffsetX;
-    public float OffsetY;
-
-    public int NoiseScale;
-    public int NoiseSeed;
-    public int NoiseOctaves;
-
-    public float NoisePersistance;
-    public float NoiseLacunarity;
+    public WorldData WorldData;
 
     public GameObject ChunkPrefab;
 
     public GameObject DebugObject;
 
+    private World _world;
 
-    private GameObject[,] _chunks;
+   // private GameObject[,] _chunks;
 
 
 
 	// Use this for initialization
 	void Start () {
-        BuildChunk(Vector3.zero);
+	    WorldData.TerrainController = this;
+        _world = new World(WorldData);
+        //BuildChunk(Vector3.zero);
 	}
 	
 	// Update is called once per frame
@@ -39,51 +31,57 @@ public class TerrainController : MonoBehaviour {
 	
 	}
 
-    void BuildChunk(Vector3 position) {
-        NoiseData = new NoiseConfig(NoiseScale, NoiseSeed, NoiseOctaves, NoisePersistance, NoiseLacunarity);
-        float[,] noiseMap = NoiseGenerator.GenerateNoise(SizeX, SizeY, NoiseData, OffsetX, OffsetY);
-        Mesh mesh = TerrainGenerator.GenerateTerrainMesh(SizeX, SizeY, noiseMap);
+    public void BuildChunk(Vector2 position) {
+        NoiseConfig NoiseData = new NoiseConfig(WorldData.NoiseScale, WorldData.NoiseSeed,
+                                        WorldData.NoiseOctaves, WorldData.NoisePersistance, WorldData.NoiseLacunarity);
+        //TODO:offset
+        float[,] NoiseMap = NoiseGenerator.GenerateNoise(WorldData.ChunkSizeX, WorldData.ChunkSizeY, NoiseData, 0, 0);
+        Mesh mesh = TerrainGenerator.GenerateTerrainMesh(WorldData.ChunkSizeX, WorldData.ChunkSizeY, NoiseMap);
         GameObject o = (GameObject)Instantiate(ChunkPrefab, position, Quaternion.identity);
         o.SetActive(true);
-        o.GetComponent<ChunkController>().setMesh(mesh);
+        o.GetComponent<ChunkController>().SetMesh(mesh);
         o.transform.parent = this.transform;
-
-
-
-        //NoiseGenerator.GenerateNoise()
     }
 
 
     public void DebugChunk() {
         if (DebugObject == null) return;
-        NoiseData = new NoiseConfig(NoiseScale, NoiseSeed, NoiseOctaves, NoisePersistance, NoiseLacunarity);
-        float[,] noiseMap = NoiseGenerator.GenerateNoise(SizeX, SizeY, NoiseData, OffsetX, OffsetY);
-        Mesh mesh = TerrainGenerator.GenerateTerrainMesh(SizeX, SizeY, noiseMap);
-        DebugObject.GetComponent<ChunkController>().setMesh(mesh);
+        DebugNoiseData = new NoiseConfig(WorldData.NoiseScale, WorldData.NoiseSeed, WorldData.NoiseOctaves, WorldData.NoisePersistance, WorldData.NoiseLacunarity);
+        float[,] noiseMap = NoiseGenerator.GenerateNoise(WorldData.SizeX, WorldData.SizeY, DebugNoiseData, 0,0);
+        Mesh mesh = TerrainGenerator.GenerateTerrainMesh(WorldData.SizeX, WorldData.SizeY, noiseMap);
+        DebugObject.GetComponent<ChunkController>().SetMesh(mesh);
         DebugObject.SetActive(true);
     }
 
     void OnValidate() {
-        if(NoiseScale < 1) {
-            NoiseScale = 1;
+
+        if (WorldData.SizeY < 1) {
+            WorldData.SizeY = 1;
+        }
+        if (WorldData.SizeX < 1) {
+            WorldData.SizeX = 1;
         }
 
-        if(NoiseOctaves < 1) {
-            NoiseOctaves = 1;
+        if(WorldData.NoiseScale < 1) {
+            WorldData.NoiseScale = 1;
         }
 
-        if(NoiseSeed < 1) {
-            NoiseSeed = 1;
+        if(WorldData.NoiseOctaves < 1) {
+            WorldData.NoiseOctaves = 1;
         }
 
-        if(NoisePersistance < 0) {
-            NoisePersistance = 0.0001f;
-        } else if(NoisePersistance > 1) {
-            NoisePersistance = 0.9999f;
+        if(WorldData.NoiseSeed < 1) {
+            WorldData.NoiseSeed = 1;
         }
 
-        if(NoiseLacunarity < 1) {
-            NoiseLacunarity = 1;
+        if(WorldData.NoisePersistance < 0) {
+            WorldData.NoisePersistance = 0.0001f;
+        } else if(WorldData.NoisePersistance > 1) {
+            WorldData.NoisePersistance = 0.9999f;
+        }
+
+        if(WorldData.NoiseLacunarity < 1) {
+            WorldData.NoiseLacunarity = 1;
         }
         
     }
