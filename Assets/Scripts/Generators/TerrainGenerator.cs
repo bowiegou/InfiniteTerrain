@@ -1,27 +1,39 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine.Assertions;
+
 public class TerrainGenerator {
 
-    public static Mesh GenerateTerrainMesh(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail = 1) {
+    public static Mesh GenerateTerrainMesh(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail = 2) {
         Mesh mesh = new Mesh();
 
         List<Vector3> vectices;
         int[] triangles;
         List<Vector2> uvs;
 
+        float fixX = (sizeX - 1) / -2f;
+        float fixZ = (sizeY - 1) / 2f;
+
         /*
         / create vectices base on noiseMap
         */
+        bool valid = sizeX%levelOfDetail == 0 && sizeY%levelOfDetail == 0;
+        Assert.IsTrue(valid);
+        if (!valid) {
+            levelOfDetail = 1;
+        }
 
-        int vectexPerRow = sizeX + 1;
-        int vectexPerCol = sizeY + 1;
+        
+
+        int vectexPerRow = sizeX / levelOfDetail + 1;
+        int vectexPerCol = sizeY / levelOfDetail + 1;
         vectices = new List<Vector3>(vectexPerRow * vectexPerCol);
         for (int y = 0; y < vectexPerCol; y++) {
             for (int x = 0; x < vectexPerRow; x++) {
             
                // Debug.Log(noiseMap[x, y]);
-                Vector3 vectex = new Vector3(x, noiseMap[x,y], -y); //since the 3D Gizmos defines y to be the raised-up
+                Vector3 vectex = new Vector3(fixX + x * levelOfDetail, noiseMap[x,y], fixZ + -y * levelOfDetail); //since the 3D Gizmos defines y to be the raised-up
                 vectices.Add(vectex);
             }
         }

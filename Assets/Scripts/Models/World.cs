@@ -23,16 +23,21 @@ public class World {
         _chunkPrefab = data.TerrainController.ChunkPrefab;
     }
 
-    public Vector2 getChunkIndex(Vector2 worldPosition) {
-        return new Vector2(Mathf.Floor(worldPosition.x/_worldData.ChunkSizeX), Mathf.Floor(worldPosition.y/_worldData.ChunkSizeY));
+    public Vector2 getChunkIndex(Vector3 worldPosition) {
+        return new Vector2(Mathf.RoundToInt(worldPosition.x/_worldData.ChunkSizeX), Mathf.RoundToInt(worldPosition.z/_worldData.ChunkSizeY));
 
         
     }
 
 
     public void BuildChunk(Vector2 position, int levelOfDetail) {
-        Vector2 chunkIndex = getChunkIndex(position);
+        Vector3 fixedPosition = new Vector3(position.x, 0, position.y);
+        Vector2 chunkIndex = getChunkIndex(fixedPosition);
+        Vector3 chunkPosition = new Vector3(( + chunkIndex.x) * _worldData.ChunkSizeX , 0 , ( chunkIndex.y) * _worldData.ChunkSizeY ); 
+        Debug.Log(chunkIndex.ToString());
         Chunk chunk;
+
+        //Debug.Log(position.ToString());
 
         if (!_chunksDictionary.TryGetValue(chunkIndex, out chunk)) {
 
@@ -42,7 +47,7 @@ public class World {
             float[,] NoiseMap = NoiseGenerator.GenerateNoise(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseData,
                 chunkIndex.x, chunkIndex.y);
             Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseMap);
-            GameObject o = (GameObject) GameObject.Instantiate(_chunkPrefab, position, Quaternion.identity);
+            GameObject o = (GameObject) GameObject.Instantiate(_chunkPrefab, chunkPosition, Quaternion.identity);
             o.SetActive(true);
             o.GetComponent<ChunkController>().SetMesh(mesh);
             o.transform.parent = _worldData.TerrainController.transform;

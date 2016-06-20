@@ -33,7 +33,7 @@ public class Chunk {
         if (levelOfDetail != this.LevelOfDetail) {
             this.LevelOfDetail = levelOfDetail;
             //TODO LOD
-            Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseMap);
+            Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseMap,levelOfDetail);
             _chunkGameObject.GetComponent<ChunkController>().SetMesh(mesh);
         }
         if(!IsActive())
