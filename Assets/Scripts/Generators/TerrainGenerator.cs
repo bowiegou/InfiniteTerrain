@@ -33,7 +33,7 @@ public class TerrainGenerator {
             for (int x = 0; x < vectexPerRow; x++) {
             
                // Debug.Log(noiseMap[x, y]);
-                Vector3 vectex = new Vector3(fixX + x * levelOfDetail, noiseMap[x,y], fixZ + -y * levelOfDetail); //since the 3D Gizmos defines y to be the raised-up
+                Vector3 vectex = new Vector3(fixX + x * levelOfDetail, noiseMap[x * levelOfDetail, y * levelOfDetail], fixZ + -y * levelOfDetail); //since the 3D Gizmos defines y to be the raised-up
                 vectices.Add(vectex);
             }
         }

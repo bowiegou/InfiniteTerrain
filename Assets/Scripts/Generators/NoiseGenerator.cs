@@ -32,8 +32,8 @@ public class NoiseGenerator {
 
                 // calculate the noiseValue of each Octaves and add them together
                 for (int i = 0; i < octaves; i++) {
-                    float sampleX = (float)x / scale * frequency + octaveOffset[i].x;
-                    float sampleY = (float)y / scale * frequency + octaveOffset[i].y;
+                    float sampleX = (x + octaveOffset[i].x) / scale * frequency;
+                    float sampleY = (y + octaveOffset[i].y) / scale * frequency;
 
                    // Debug.Log(sampleX + " " + sampleY);
 

@@ -20,6 +20,9 @@ public class TerrainController : MonoBehaviour {
 
     public int lel;
 
+    public float offsetX;
+    public float offsetY;
+
     private World _world;
 
    // private GameObject[,] _chunks;
@@ -65,17 +68,17 @@ public class TerrainController : MonoBehaviour {
 
     public void DebugChunk() {
         if (DebugObject == null) return;
-        //        DebugNoiseData = new NoiseConfig(WorldData.NoiseScale, WorldData.NoiseSeed, WorldData.NoiseOctaves, WorldData.NoisePersistance, WorldData.NoiseLacunarity);
-        //        float[,] noiseMap = NoiseGenerator.GenerateNoise(WorldData.SizeX, WorldData.SizeY, DebugNoiseData, 0,0);
-        //        Mesh mesh = TerrainGenerator.GenerateTerrainMesh(WorldData.SizeX, WorldData.SizeY, noiseMap,lel);
-        //        DebugObject.GetComponent<ChunkController>().SetMesh(mesh);
-        //        DebugObject.SetActive(true);
-        Vector2 cameraPositon = new Vector2(DebugCamera.transform.position.x, DebugCamera.transform.position.y);
-        for (int x = -WorldData.ChunkSizeX; x <= WorldData.ChunkSizeX; x += WorldData.ChunkSizeX) {
-            for (int y = -WorldData.ChunkSizeY; y <= WorldData.ChunkSizeY; y += WorldData.ChunkSizeY) {
-                _world.BuildChunk(cameraPositon - new Vector2(x, y), lel);
-            }
-        }
+                DebugNoiseData = new NoiseConfig(WorldData.NoiseScale, WorldData.NoiseSeed, WorldData.NoiseOctaves, WorldData.NoisePersistance, WorldData.NoiseLacunarity);
+                float[,] noiseMap = NoiseGenerator.GenerateNoise(WorldData.SizeX, WorldData.SizeY, DebugNoiseData, offsetX, offsetY);
+                Mesh mesh = TerrainGenerator.GenerateTerrainMesh(WorldData.SizeX, WorldData.SizeY, noiseMap,lel);
+                DebugObject.GetComponent<ChunkController>().SetMesh(mesh);
+                DebugObject.SetActive(true);
+//        Vector2 cameraPositon = new Vector2(DebugCamera.transform.position.x, DebugCamera.transform.position.y);
+//        for (int x = -WorldData.ChunkSizeX; x <= WorldData.ChunkSizeX; x += WorldData.ChunkSizeX) {
+//            for (int y = -WorldData.ChunkSizeY; y <= WorldData.ChunkSizeY; y += WorldData.ChunkSizeY) {
+//                _world.BuildChunk(cameraPositon - new Vector2(x, y), lel);
+//            }
+//        }
 
     }
 

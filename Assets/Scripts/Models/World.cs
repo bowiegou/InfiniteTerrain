@@ -34,7 +34,7 @@ public class World {
         Vector3 fixedPosition = new Vector3(position.x, 0, position.y);
         Vector2 chunkIndex = getChunkIndex(fixedPosition);
         Vector3 chunkPosition = new Vector3(( + chunkIndex.x) * _worldData.ChunkSizeX , 0 , ( chunkIndex.y) * _worldData.ChunkSizeY ); 
-        Debug.Log(chunkIndex.ToString());
+        //Debug.Log(chunkIndex.ToString());
         Chunk chunk;
 
         //Debug.Log(position.ToString());
@@ -44,9 +44,10 @@ public class World {
             NoiseConfig NoiseData = new NoiseConfig(_worldData.NoiseScale, _worldData.NoiseSeed,
                 _worldData.NoiseOctaves, _worldData.NoisePersistance, _worldData.NoiseLacunarity);
             //TODO:offset
+            Debug.Log(chunkPosition);
             float[,] NoiseMap = NoiseGenerator.GenerateNoise(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseData,
-                chunkIndex.x, chunkIndex.y);
-            Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseMap);
+                chunkPosition.x, -chunkPosition.z );
+            Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseMap, 2);
             GameObject o = (GameObject) GameObject.Instantiate(_chunkPrefab, chunkPosition, Quaternion.identity);
             o.SetActive(true);
             o.GetComponent<ChunkController>().SetMesh(mesh);
