@@ -4,10 +4,11 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class World {
-    Dictionary<Vector2, Chunk> _chunksDictionary;
+    private Dictionary<Vector2, Chunk> _chunksDictionary;
+    private Dictionary<Vector2, Chunk> _lastUpdatedChunks;
     private WorldData _worldData;
 
-    private GameObject _chunkPrefab;
+    private readonly GameObject _chunkPrefab;
 
 
     public World(WorldData data) {
@@ -23,7 +24,7 @@ public class World {
         _chunkPrefab = data.TerrainController.ChunkPrefab;
     }
 
-    public Vector2 getChunkIndex(Vector3 worldPosition) {
+    public Vector2 GetChunkIndex(Vector3 worldPosition) {
         return new Vector2(Mathf.RoundToInt(worldPosition.x/_worldData.ChunkSizeX), Mathf.RoundToInt(worldPosition.z/_worldData.ChunkSizeY));
 
         
@@ -32,7 +33,7 @@ public class World {
 
     public void BuildChunk(Vector2 position, int levelOfDetail) {
         Vector3 fixedPosition = new Vector3(position.x, 0, position.y);
-        Vector2 chunkIndex = getChunkIndex(fixedPosition);
+        Vector2 chunkIndex = GetChunkIndex(fixedPosition);
         Vector3 chunkPosition = new Vector3(( + chunkIndex.x) * _worldData.ChunkSizeX , 0 , ( chunkIndex.y) * _worldData.ChunkSizeY ); 
         //Debug.Log(chunkIndex.ToString());
         Chunk chunk;

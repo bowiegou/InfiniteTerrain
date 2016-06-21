@@ -25,6 +25,8 @@ public class TerrainController : MonoBehaviour {
 
     private World _world;
 
+    private Vector2 _lastCameraPosition;
+
    // private GameObject[,] _chunks;
 
 
@@ -33,8 +35,10 @@ public class TerrainController : MonoBehaviour {
 	void Start () {
 	    WorldData.TerrainController = this;
         _world = new World(WorldData);
+        _lastCameraPosition = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.z);
+        _world.BuildChunk(_lastCameraPosition, 1);
         //BuildChunk(Vector3.zero);
-	}
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -43,11 +47,17 @@ public class TerrainController : MonoBehaviour {
 
     void UpdateChunk() {
         Vector2 cameraPositon = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.z);
-        //for (int x = -WorldData.ChunkSizeX; x <= WorldData.ChunkSizeX; x+=WorldData.ChunkSizeX) {
-          //  for (int y = -WorldData.ChunkSizeY; y <= WorldData.ChunkSizeY; y += WorldData.ChunkSizeY) {
-                _world.BuildChunk(cameraPositon,1);
-          //  }
-       // }
+        if ( (cameraPositon - _lastCameraPosition).SqrMagnitude() < 8) {
+            return;
+        }
+        //Debug.Log("Update");
+        _lastCameraPosition = cameraPositon;
+        
+        for (int x = -WorldData.ChunkSizeX; x <= WorldData.ChunkSizeX; x+=WorldData.ChunkSizeX) {
+            for (int y = -WorldData.ChunkSizeY; y <= WorldData.ChunkSizeY; y += WorldData.ChunkSizeY) {
+                _world.BuildChunk(new Vector2(cameraPositon.x + x, cameraPositon.y + y), 1);
+            }
+        }
 
     }
 
