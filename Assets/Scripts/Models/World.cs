@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class World {
     private Dictionary<Vector2, Chunk> _chunksDictionary;
     private Dictionary<Vector2, Chunk> _lastUpdatedChunks;
+    private Dictionary<Vector2, Chunk> _thisUpdatedChunks;
     private WorldData _worldData;
 
     private readonly GameObject _chunkPrefab;
@@ -13,6 +14,8 @@ public class World {
 
     public World(WorldData data) {
         _chunksDictionary = new Dictionary<Vector2, Chunk>();
+        _lastUpdatedChunks = new Dictionary<Vector2, Chunk>();
+        _thisUpdatedChunks = new Dictionary<Vector2, Chunk>();
         _worldData = data;
         _chunkPrefab = data.TerrainController.ChunkPrefab;
         //_terrainController = data.TerrainController;
@@ -30,7 +33,11 @@ public class World {
         
     }
 
-
+    /// <summary>
+    /// To build a chunk at a postion
+    /// </summary>
+    /// <param name="position">World Position to place chunk</param>
+    /// <param name="levelOfDetail">Level of the details of the chunk</param>
     public void BuildChunk(Vector2 position, int levelOfDetail) {
         Vector3 fixedPosition = new Vector3(position.x, 0, position.y);
         Vector2 chunkIndex = GetChunkIndex(fixedPosition);
@@ -59,10 +66,34 @@ public class World {
             _chunksDictionary.Add(chunkIndex, chunk);
         }
         else {
-
-            chunk.UpdateChunk(levelOfDetail);
+            if (!_lastUpdatedChunks.Remove(chunkIndex)) {
+                chunk.UpdateChunk(levelOfDetail);
+            } 
         }
 
+        _thisUpdatedChunks.Add(chunkIndex,chunk);
+
+    }
+
+
+    private void CleanUpLastChunks() {
+        foreach (KeyValuePair<Vector2, Chunk> chunk in _lastUpdatedChunks) {
+                chunk.Value.setActive(false);
+        }
+        _lastUpdatedChunks.Clear();
+        foreach (KeyValuePair<Vector2, Chunk> chunk in _thisUpdatedChunks) {
+            _lastUpdatedChunks.Add(chunk.Key, chunk.Value);
+        }
+        _thisUpdatedChunks.Clear();
+    }
+
+
+
+    /// <summary>
+    /// some actions needed to be done after a frame has been updated
+    /// </summary>
+    public void OnFinishFrame() {
+        CleanUpLastChunks();
     }
 
 

@@ -29,6 +29,10 @@ public class Chunk {
         return _chunkGameObject.activeSelf;
     }
 
+    public void setActive(bool active) {
+        _chunkGameObject.SetActive(active);
+    }
+
     public void UpdateChunk(int levelOfDetail) {
         if (levelOfDetail != this.LevelOfDetail) {
             this.LevelOfDetail = levelOfDetail;

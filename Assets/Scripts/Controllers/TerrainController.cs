@@ -37,6 +37,7 @@ public class TerrainController : MonoBehaviour {
         _world = new World(WorldData);
         _lastCameraPosition = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.z);
         _world.BuildChunk(_lastCameraPosition, 1);
+        _world.OnFinishFrame();
         //BuildChunk(Vector3.zero);
     }
 	
@@ -57,7 +58,12 @@ public class TerrainController : MonoBehaviour {
             for (int y = -WorldData.ChunkSizeY; y <= WorldData.ChunkSizeY; y += WorldData.ChunkSizeY) {
                 _world.BuildChunk(new Vector2(cameraPositon.x + x, cameraPositon.y + y), 1);
             }
+
+
         }
+
+
+        _world.OnFinishFrame();
 
     }
 
