@@ -9,7 +9,7 @@ public class Chunk {
 
     WorldData _worldData;
     Vector3 Position;
-    int LevelOfDetail;
+    int _levelOfDetail;
 
     private float[,] NoiseMap;
 
@@ -17,12 +17,12 @@ public class Chunk {
         _chunkGameObject = o;
         _worldData = data._worldData;
         Position = data.Position;
-        LevelOfDetail = data.LevelOfDetail;
+        _levelOfDetail = data.LevelOfDetail;
         NoiseMap = data.NoiseMap;
     }
 
     public ChunkData GetChunkData() {
-        return new ChunkData(_worldData,Position,LevelOfDetail,NoiseMap);
+        return new ChunkData(_worldData,Position,_levelOfDetail,NoiseMap);
     }
 
     public bool IsActive() {
@@ -34,9 +34,9 @@ public class Chunk {
     }
 
     public void UpdateChunk(int levelOfDetail) {
-        if (levelOfDetail != this.LevelOfDetail) {
+        if (levelOfDetail != this._levelOfDetail) {
             
-            this.LevelOfDetail = levelOfDetail;
+            this._levelOfDetail = levelOfDetail;
             Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseMap,levelOfDetail);
             _chunkGameObject.GetComponent<ChunkController>().SetMesh(mesh);
             //Debug.Log("Reset Mesh Done");

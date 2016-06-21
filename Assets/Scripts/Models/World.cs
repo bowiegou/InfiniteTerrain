@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Threading;
 
 public class World {
-    private Dictionary<Vector2, Chunk> _chunksDictionary;
-    private Dictionary<Vector2, Chunk> _lastUpdatedChunks;
-    private Dictionary<Vector2, Chunk> _thisUpdatedChunks;
+    private readonly Dictionary<Vector2, Chunk> _chunksDictionary;
+    private readonly Dictionary<Vector2, Chunk> _lastUpdatedChunks;
+    private readonly Dictionary<Vector2, Chunk> _thisUpdatedChunks;
     private WorldData _worldData;
 
     private readonly GameObject _chunkPrefab;

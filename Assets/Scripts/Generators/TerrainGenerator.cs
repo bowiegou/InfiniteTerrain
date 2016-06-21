@@ -32,7 +32,6 @@ public class TerrainGenerator {
         for (int y = 0; y < vectexPerCol; y++) {
             for (int x = 0; x < vectexPerRow; x++) {
             
-               // Debug.Log(noiseMap[x, y]);
                 Vector3 vectex = new Vector3(fixX + x * levelOfDetail, noiseMap[x * levelOfDetail, y * levelOfDetail], fixZ + -y * levelOfDetail); //since the 3D Gizmos defines y to be the raised-up
                 vectices.Add(vectex);
             }
@@ -50,14 +49,14 @@ public class TerrainGenerator {
         // -1 becuase the last vectices will not own any triangles
         for (int y = 0; y < vectexPerCol - 1; y++) {
             for (int x = 0; x < vectexPerRow - 1; x++) {
-                int _index = y * vectexPerRow + x; // the index of the triangle
-                triangles[count++] = _index;
-                triangles[count++] = _index + 1 + vectexPerRow;
-                triangles[count++] = _index + vectexPerRow;
+                int index = y * vectexPerRow + x; // the index of the triangle
+                triangles[count++] = index;
+                triangles[count++] = index + 1 + vectexPerRow;
+                triangles[count++] = index + vectexPerRow;
 
-                triangles[count++] = _index + 1 + vectexPerRow;
-                triangles[count++] = _index;
-                triangles[count++] = _index + 1;
+                triangles[count++] = index + 1 + vectexPerRow;
+                triangles[count++] = index;
+                triangles[count++] = index + 1;
 
             }
         }

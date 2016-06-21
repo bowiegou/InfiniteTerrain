@@ -9,25 +9,17 @@ public class TerrainController : MonoBehaviour {
 
     public WorldData WorldData;
 
-    
-
     public GameObject ChunkPrefab;
 
     public GameObject DebugObject;
     public GameObject DebugCamera;
 
-
-
-    public int lel;
-
-    public float offsetX;
-    public float offsetY;
+    public float DebugoffsetX;
+    public float DebugoffsetY;
 
     private World _world;
 
     private Vector2 _lastCameraPosition;
-
-
 
 
 	// Use this for initialization
@@ -80,8 +72,8 @@ public class TerrainController : MonoBehaviour {
     public void DebugChunk() {
         if (DebugObject == null) return;
                 DebugNoiseData = new NoiseConfig(WorldData.NoiseScale, WorldData.NoiseSeed, WorldData.NoiseOctaves, WorldData.NoisePersistance, WorldData.NoiseLacunarity);
-                float[,] noiseMap = NoiseGenerator.GenerateNoise(WorldData.SizeX, WorldData.SizeY, DebugNoiseData, offsetX, offsetY);
-                Mesh mesh = TerrainGenerator.GenerateTerrainMesh(WorldData.SizeX, WorldData.SizeY, noiseMap,lel);
+                float[,] noiseMap = NoiseGenerator.GenerateNoise(WorldData.SizeX, WorldData.SizeY, DebugNoiseData, DebugoffsetX, DebugoffsetY);
+                Mesh mesh = TerrainGenerator.GenerateTerrainMesh(WorldData.SizeX, WorldData.SizeY, noiseMap,1);
                 DebugObject.GetComponent<ChunkController>().SetMesh(mesh);
                 DebugObject.SetActive(true);
     }
