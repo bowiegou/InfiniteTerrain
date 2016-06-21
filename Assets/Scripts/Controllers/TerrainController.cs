@@ -53,16 +53,19 @@ public class TerrainController : MonoBehaviour {
         }
         //Debug.Log("Update");
         _lastCameraPosition = cameraPositon;
-        
-        for (int x = -WorldData.ChunkSizeX; x <= WorldData.ChunkSizeX; x+=WorldData.ChunkSizeX) {
-            for (int y = -WorldData.ChunkSizeY; y <= WorldData.ChunkSizeY; y += WorldData.ChunkSizeY) {
-                _world.BuildChunk(new Vector2(cameraPositon.x + x, cameraPositon.y + y), 1);
+
+        for (int i = 1; i <= WorldData.FOVLevel.Count; i++) {
+            //Debug.Log("Update + " + i);
+            for (int x = -WorldData.ChunkSizeX * i; x <= WorldData.ChunkSizeX * i; x += WorldData.ChunkSizeX) {
+                for (int y = -WorldData.ChunkSizeY * i; y <= WorldData.ChunkSizeY * i; y += WorldData.ChunkSizeY) {
+                    _world.BuildChunk(new Vector2(cameraPositon.x + x, cameraPositon.y + y), WorldData.FOVLevel[i  - 1]);
+                }
             }
 
 
         }
 
-
+        //Debug.Log("Update");
         _world.OnFinishFrame();
 
     }

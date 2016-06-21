@@ -24,11 +24,11 @@ public class ChunkController : MonoBehaviour {
     public void SetMesh(Mesh mesh) {
         if(_meshFilter == null || _meshCollider == null)
             GetMeshComponents();
-        mesh.RecalculateBounds();
-        mesh.RecalculateNormals();
-        mesh.Optimize();
+       // _meshRenderer.enabled = false;
         _meshFilter.mesh = mesh;
-        _meshCollider.sharedMesh = mesh;
+        //Debug.Log("Reset Mesh");
+        //_meshCollider.sharedMesh = mesh;
+       // _meshRenderer.enabled = true;
     }
 	
 	// Update is called once per frame
