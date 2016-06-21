@@ -35,8 +35,6 @@ public class NoiseGenerator {
                     float sampleX = (x + octaveOffset[i].x) / scale * frequency;
                     float sampleY = (y + octaveOffset[i].y) / scale * frequency;
 
-                   // Debug.Log(sampleX + " " + sampleY);
-
                     noiseValue += (Mathf.PerlinNoise(sampleX, sampleY) * 2 - 1) * amplitude; // turn the value into possibly negative
 
                     amplitude *= persistance;

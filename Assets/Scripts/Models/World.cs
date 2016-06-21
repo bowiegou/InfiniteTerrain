@@ -2,6 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 
 public class World {
     private Dictionary<Vector2, Chunk> _chunksDictionary;
@@ -18,7 +19,6 @@ public class World {
         _thisUpdatedChunks = new Dictionary<Vector2, Chunk>();
         _worldData = data;
         _chunkPrefab = data.TerrainController.ChunkPrefab;
-        //_terrainController = data.TerrainController;
     }
 
     public World(WorldData data,Dictionary<Vector2, Chunk> chunksDictionary) {
@@ -45,19 +45,15 @@ public class World {
         if (_thisUpdatedChunks.ContainsKey(chunkIndex)) return;
 
         Vector3 chunkPosition = new Vector3(( + chunkIndex.x) * _worldData.ChunkSizeX , 0 , ( chunkIndex.y) * _worldData.ChunkSizeY ); 
-        //Debug.Log(chunkIndex.ToString());
         Chunk chunk;
 
 
 
-        //Debug.Log(position.ToString());
 
         if (!_chunksDictionary.TryGetValue(chunkIndex, out chunk)) {
 
             NoiseConfig noiseData = new NoiseConfig(_worldData.NoiseScale, _worldData.NoiseSeed,
                 _worldData.NoiseOctaves, _worldData.NoisePersistance, _worldData.NoiseLacunarity);
-            //TODO:offset
-            //Debug.Log(chunkPosition);
             float[,] noiseMap = NoiseGenerator.GenerateNoise(_worldData.ChunkSizeX, _worldData.ChunkSizeY, noiseData,
                 chunkPosition.x, -chunkPosition.z );
             Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, noiseMap, levelOfDetail);
@@ -82,9 +78,7 @@ public class World {
 
 
     private void CleanUpLastChunks() {
-        //Debug.Log(_lastUpdatedChunks.ToString());
         foreach (KeyValuePair<Vector2, Chunk> chunk in _lastUpdatedChunks) {
-            //Debug.Log("Clean up" + chunk.Value.GetChunkData().Position.ToString());
                 chunk.Value.setActive(false);
         }
         _lastUpdatedChunks.Clear();
