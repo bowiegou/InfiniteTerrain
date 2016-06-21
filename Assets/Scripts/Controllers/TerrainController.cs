@@ -43,10 +43,8 @@ public class TerrainController : MonoBehaviour {
 
     void UpdateChunk() {
         Vector2 cameraPositon = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.z);
-        //Debug.Log(cameraPositon.ToString());
         //for (int x = -WorldData.ChunkSizeX; x <= WorldData.ChunkSizeX; x+=WorldData.ChunkSizeX) {
           //  for (int y = -WorldData.ChunkSizeY; y <= WorldData.ChunkSizeY; y += WorldData.ChunkSizeY) {
-               // Debug.Log(x + "," + y);
                 _world.BuildChunk(cameraPositon,1);
           //  }
        // }
