@@ -39,7 +39,7 @@ public class TerrainController : MonoBehaviour {
     void UpdateChunk() {
         Vector2 cameraPositon = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.z);
         
-        if ( (cameraPositon - _lastCameraPosition).SqrMagnitude() < 16) {
+        if ( (cameraPositon - _lastCameraPosition).SqrMagnitude() < WorldData.ChunkSizeX / 2) {
 
             return;
         }
