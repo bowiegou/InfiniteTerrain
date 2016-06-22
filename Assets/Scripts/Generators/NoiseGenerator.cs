@@ -62,6 +62,7 @@ public struct NoiseConfig {
     public float Persistance;
     public float Lacunarity;
 
+
     public NoiseConfig(float scale, int seed, int octaves, float persistance, float lacunarity) {
         this.Scale = scale;
         this.Seed = seed;

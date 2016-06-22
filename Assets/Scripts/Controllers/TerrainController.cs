@@ -15,8 +15,8 @@ public class TerrainController : MonoBehaviour {
     public GameObject DebugObject;
     public GameObject DebugCamera;
 
-    public float DebugoffsetX;
-    public float DebugoffsetY;
+    public float DebugOffsetX;
+    public float DebugOffsetY;
 
     private World _world;
 
@@ -61,10 +61,11 @@ public class TerrainController : MonoBehaviour {
     }
 
     public void BuildChunk(Vector2 position) {
-        NoiseConfig NoiseData = new NoiseConfig(WorldData.NoiseScale, WorldData.NoiseSeed,
+        NoiseConfig noiseData = new NoiseConfig(WorldData.NoiseScale, WorldData.NoiseSeed,
                                         WorldData.NoiseOctaves, WorldData.NoisePersistance, WorldData.NoiseLacunarity);
-        float[,] NoiseMap = NoiseGenerator.GenerateNoise(WorldData.ChunkSizeX, WorldData.ChunkSizeY, NoiseData, 0, 0);
-        Mesh mesh = TerrainGenerator.GenerateTerrainMesh(WorldData.ChunkSizeX, WorldData.ChunkSizeY, NoiseMap);
+        float[,] noiseMap = NoiseGenerator.GenerateNoise(WorldData.ChunkSizeX, WorldData.ChunkSizeY, noiseData, 0, 0);
+        MeshConfig meshConfig = new MeshConfig(WorldData.ChunkSizeX, WorldData.ChunkSizeY, noiseMap);
+        Mesh mesh = TerrainGenerator.GenerateTerrainMesh(meshConfig);
         GameObject o = (GameObject)Instantiate(ChunkPrefab, position, Quaternion.identity);
         o.SetActive(true);
         o.GetComponent<ChunkController>().SetMesh(mesh);
@@ -75,8 +76,9 @@ public class TerrainController : MonoBehaviour {
     public void DebugChunk() {
         if (DebugObject == null) return;
                 DebugNoiseData = new NoiseConfig(WorldData.NoiseScale, WorldData.NoiseSeed, WorldData.NoiseOctaves, WorldData.NoisePersistance, WorldData.NoiseLacunarity);
-                float[,] noiseMap = NoiseGenerator.GenerateNoise(WorldData.SizeX, WorldData.SizeY, DebugNoiseData, DebugoffsetX, DebugoffsetY);
-                Mesh mesh = TerrainGenerator.GenerateTerrainMesh(WorldData.SizeX, WorldData.SizeY, noiseMap,1);
+                float[,] noiseMap = NoiseGenerator.GenerateNoise(WorldData.SizeX, WorldData.SizeY, DebugNoiseData, DebugOffsetX, DebugOffsetY);
+                MeshConfig meshConfig = new MeshConfig(WorldData.ChunkSizeX, WorldData.ChunkSizeY, noiseMap);
+                Mesh mesh = TerrainGenerator.GenerateTerrainMesh(meshConfig);
                 DebugObject.GetComponent<ChunkController>().SetMesh(mesh);
                 DebugObject.SetActive(true);
     }

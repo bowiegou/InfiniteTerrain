@@ -12,7 +12,7 @@ public class World {
 
     private readonly GameObject _chunkPrefab;
 
-    private static Queue<KeyValuePair<TerrainGenerator.MeshData, Action<TerrainGenerator.MeshData>>> MeshGenerationQueue;
+    private static Queue<KeyValuePair<MeshData, Action<MeshData>>> _meshGenerationQueue;
 
 
     public World(WorldData data) {
@@ -22,7 +22,7 @@ public class World {
         _worldData = data;
         _chunkPrefab = data.TerrainController.ChunkPrefab;
 
-        MeshGenerationQueue = new Queue<KeyValuePair<TerrainGenerator.MeshData, Action<TerrainGenerator.MeshData>>>();
+        _meshGenerationQueue = new Queue<KeyValuePair<MeshData, Action<MeshData>>>();
     }
 
     public World(WorldData data,Dictionary<Vector2, Chunk> chunksDictionary) {
@@ -57,15 +57,16 @@ public class World {
                 _worldData.NoiseOctaves, _worldData.NoisePersistance, _worldData.NoiseLacunarity);
             float[,] noiseMap = NoiseGenerator.GenerateNoise(_worldData.ChunkSizeX, _worldData.ChunkSizeY, noiseData,
                 chunkPosition.x, -chunkPosition.z );
-            //Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, noiseMap, levelOfDetail);
+            MeshConfig meshConfig = new MeshConfig(_worldData.ChunkSizeX, _worldData.ChunkSizeY, noiseMap, levelOfDetail,_worldData.HeightMultiplier);
+
             GameObject o = (GameObject) GameObject.Instantiate(_chunkPrefab, chunkPosition, Quaternion.identity);
-            //o.SetActive(true);
-            //o.GetComponent<ChunkController>().SetMesh(mesh);
             o.transform.parent = _worldData.TerrainController.transform;
 
-            chunk = new Chunk(o, new ChunkData(_worldData, position, levelOfDetail,noiseMap));
+            chunk = new Chunk(o, new ChunkData(_worldData, position,noiseMap, meshConfig));
 
-            TerrainGenerator.GenerateTerrainMeshInBackground(_worldData.ChunkSizeX, _worldData.ChunkSizeY, noiseMap, levelOfDetail,chunk.onReceiveMeshData);
+
+
+            TerrainGenerator.GenerateTerrainMeshInBackground(meshConfig,chunk.onReceiveMeshData);
 
             _chunksDictionary.Add(chunkIndex, chunk);
         }
@@ -82,7 +83,7 @@ public class World {
 
     private void CleanUpLastChunks() {
         foreach (KeyValuePair<Vector2, Chunk> chunk in _lastUpdatedChunks) {
-                chunk.Value.setActive(false);
+                chunk.Value.SetActive(false);
         }
         _lastUpdatedChunks.Clear();
         foreach (KeyValuePair<Vector2, Chunk> chunk in _thisUpdatedChunks) {
@@ -92,10 +93,10 @@ public class World {
     }
 
     private static void UpdateMesh() {
-        lock (MeshGenerationQueue) {
-            while (MeshGenerationQueue.Count > 0) {
-            KeyValuePair<TerrainGenerator.MeshData, Action<TerrainGenerator.MeshData>> key =
-                MeshGenerationQueue.Dequeue();
+        lock (_meshGenerationQueue) {
+            while (_meshGenerationQueue.Count > 0) {
+            KeyValuePair<MeshData, Action<MeshData>> key =
+                _meshGenerationQueue.Dequeue();
                 key.Value(key.Key);
             }
     }
@@ -111,9 +112,9 @@ public class World {
         UpdateMesh();
     }
 
-    public static void OnReceiveMeshData(KeyValuePair<TerrainGenerator.MeshData,Action<TerrainGenerator.MeshData>> key) {
-        lock (MeshGenerationQueue) {
-            MeshGenerationQueue.Enqueue(key);
+    public static void OnReceiveMeshData(KeyValuePair<MeshData,Action<MeshData>> key) {
+        lock (_meshGenerationQueue) {
+            _meshGenerationQueue.Enqueue(key);
         }
     }
 
@@ -135,6 +136,8 @@ public struct WorldData {
 
     public float NoisePersistance;
     public float NoiseLacunarity;
+
+    public int HeightMultiplier;
 
     public TerrainController TerrainController;
 

@@ -8,56 +8,57 @@ using UnityEngine.Assertions;
 
 public class TerrainGenerator {
 
-    public static void GenerateTerrainMeshInBackground(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail,
+    public static void GenerateTerrainMeshInBackground(MeshConfig config,
         Action<MeshData> callback) {
         ThreadStart thread = delegate {
-            MeshThread(sizeX, sizeY, noiseMap, levelOfDetail, callback);
+            MeshThread(config, callback);
         };
 
         new Thread(thread).Start();
 
     }
 
-    static void MeshThread(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail,
-        Action<MeshData> callback) {
+    static void MeshThread(MeshConfig config, Action<MeshData> callback) {
 
-        MeshData meshdata = GenerateTerrainMeshData(sizeX, sizeY, noiseMap, levelOfDetail);
+        MeshData meshdata = GenerateTerrainMeshData(config);
         World.OnReceiveMeshData(new KeyValuePair<MeshData, Action<MeshData>>(meshdata,callback));
 
     }
 
-    public static Mesh GenerateTerrainMesh(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail = 2) {
+    public static Mesh GenerateTerrainMesh(MeshConfig config) {
 
-        return GenerateTerrainMeshData(sizeX, sizeY, noiseMap, levelOfDetail).GetMesh();
+        return GenerateTerrainMeshData(config).GetMesh();
     }
 
-    public static MeshData GenerateTerrainMeshData(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail = 2) {
+    public static MeshData GenerateTerrainMeshData(MeshConfig config) {
         
         List<Vector3> vectices;
         int[] triangles;
         List<Vector2> uvs;
 
-        float fixX = (sizeX - 1) / -2f;
-        float fixZ = (sizeY - 1) / 2f;
+        float fixX = (config.SizeX - 1) / -2f;
+        float fixZ = (config.SizeY - 1) / 2f;
 
         /*
         / create vectices base on noiseMap
         */
-        bool valid = sizeX%levelOfDetail == 0 && sizeY%levelOfDetail == 0;
+        bool valid = config.SizeX%config.LevelOfDetail == 0 && config.SizeY%config.LevelOfDetail == 0;
         Assert.IsTrue(valid);
         if (!valid) {
-            levelOfDetail = 1;
+            config.LevelOfDetail = 1;
         }
 
         
 
-        int vectexPerRow = sizeX / levelOfDetail + 1;
-        int vectexPerCol = sizeY / levelOfDetail + 1;
+        int vectexPerRow = config.SizeX / config.LevelOfDetail + 1;
+        int vectexPerCol = config.SizeY / config.LevelOfDetail + 1;
         vectices = new List<Vector3>(vectexPerRow * vectexPerCol);
         for (int y = 0; y < vectexPerCol; y++) {
             for (int x = 0; x < vectexPerRow; x++) {
             
-                Vector3 vectex = new Vector3(fixX + x * levelOfDetail, noiseMap[x * levelOfDetail, y * levelOfDetail], fixZ + -y * levelOfDetail); //since the 3D Gizmos defines y to be the raised-up
+                Vector3 vectex = new Vector3(fixX + x * config.LevelOfDetail, 
+                                            config.NoiseMap[x * config.LevelOfDetail, y * config.LevelOfDetail] * config.HeightMultiplier,
+                                            fixZ + -y * config.LevelOfDetail); //since the 3D Gizmos defines y to be the raised-up
                 vectices.Add(vectex);
             }
         }
@@ -98,26 +99,46 @@ public class TerrainGenerator {
         return new MeshData(vectices,triangles,uvs);
     }
 
-    public struct MeshData {
-        public MeshData(List<Vector3> vectices, int[] triangles, List<Vector2> uvs) {
-            this.vectices = vectices;
-            this.triangles = triangles;
-            this.uvs = uvs;
-        }
 
-        public Mesh GetMesh() {
-            Mesh mesh = new Mesh();
-            mesh.SetVertices(vectices);
-            mesh.triangles = triangles;
-            mesh.SetUVs(0, uvs);
-            return mesh;
-        }
+}
 
-        List<Vector3> vectices;
-        int[] triangles;
-        List<Vector2> uvs;
-
-        
+public struct MeshConfig {
+    public MeshConfig(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail = 1, int heightMultiplier = 1) {
+        this.SizeX = sizeX;
+        this.SizeY = sizeY;
+        this.NoiseMap = noiseMap;
+        this.LevelOfDetail = levelOfDetail;
+        HeightMultiplier = heightMultiplier;
     }
+
+    public int SizeX;
+    public int SizeY;
+    public float[,] NoiseMap;
+    public int LevelOfDetail;
+    public int HeightMultiplier;
+
+}
+
+
+
+public struct MeshData {
+    public MeshData(List<Vector3> vectices, int[] triangles, List<Vector2> uvs) {
+        this.vectices = vectices;
+        this.triangles = triangles;
+        this.uvs = uvs;
+    }
+
+    public Mesh GetMesh() {
+        Mesh mesh = new Mesh();
+        mesh.SetVertices(vectices);
+        mesh.triangles = triangles;
+        mesh.SetUVs(0, uvs);
+        return mesh;
+    }
+
+    List<Vector3> vectices;
+    int[] triangles;
+    List<Vector2> uvs;
+
 
 }
