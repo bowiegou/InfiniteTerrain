@@ -1,13 +1,38 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 using UnityEngine.Assertions;
 
 public class TerrainGenerator {
 
-    public static Mesh GenerateTerrainMesh(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail = 2) {
-        Mesh mesh = new Mesh();
+    public static void GenerateTerrainMeshInBackground(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail,
+        Action<MeshData> callback) {
+        ThreadStart thread = delegate {
+            MeshThread(sizeX, sizeY, noiseMap, levelOfDetail, callback);
+        };
 
+        new Thread(thread).Start();
+
+    }
+
+    static void MeshThread(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail,
+        Action<MeshData> callback) {
+
+        MeshData meshdata = GenerateTerrainMeshData(sizeX, sizeY, noiseMap, levelOfDetail);
+        World.OnReceiveMeshData(new KeyValuePair<MeshData, Action<MeshData>>(meshdata,callback));
+
+    }
+
+    public static Mesh GenerateTerrainMesh(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail = 2) {
+
+        return GenerateTerrainMeshData(sizeX, sizeY, noiseMap, levelOfDetail).GetMesh();
+    }
+
+    public static MeshData GenerateTerrainMeshData(int sizeX, int sizeY, float[,] noiseMap, int levelOfDetail = 2) {
+        
         List<Vector3> vectices;
         int[] triangles;
         List<Vector2> uvs;
@@ -70,24 +95,29 @@ public class TerrainGenerator {
         for (int i = 0; i < vectices.Count; i++) {
             uvs.Add(new Vector2(vectices[i].x, vectices[i].z));
         }
+        return new MeshData(vectices,triangles,uvs);
+    }
+
+    public struct MeshData {
+        public MeshData(List<Vector3> vectices, int[] triangles, List<Vector2> uvs) {
+            this.vectices = vectices;
+            this.triangles = triangles;
+            this.uvs = uvs;
+        }
+
+        public Mesh GetMesh() {
+            Mesh mesh = new Mesh();
+            mesh.SetVertices(vectices);
+            mesh.triangles = triangles;
+            mesh.SetUVs(0, uvs);
+            return mesh;
+        }
+
+        List<Vector3> vectices;
+        int[] triangles;
+        List<Vector2> uvs;
 
         
-
-        mesh.SetVertices(vectices);
-        mesh.triangles = triangles;
-        mesh.SetUVs(0, uvs);
-
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
-        mesh.Optimize();
-
-
-        
-        
-
-
-
-        return mesh;
     }
 
 }
