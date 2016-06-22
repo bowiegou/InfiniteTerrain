@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using UnityEngine.Assertions.Comparers;
 
 public class TerrainController : MonoBehaviour {
 
@@ -27,8 +28,7 @@ public class TerrainController : MonoBehaviour {
 	    WorldData.TerrainController = this;
         _world = new World(WorldData);
         _lastCameraPosition = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.z);
-        _world.BuildChunk(_lastCameraPosition, 1);
-        _world.OnFinishFrame();
+        _lastCameraPosition = new Vector2(Mathf.Infinity,Mathf.Infinity);
     }
 	
 	// Update is called once per frame
@@ -38,9 +38,12 @@ public class TerrainController : MonoBehaviour {
 
     void UpdateChunk() {
         Vector2 cameraPositon = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.z);
-        if ( (cameraPositon - _lastCameraPosition).SqrMagnitude() < 8) {
+        
+        if ( (cameraPositon - _lastCameraPosition).SqrMagnitude() < 16) {
+
             return;
         }
+        //Debug.Log("--------" + cameraPositon.ToString());
         _lastCameraPosition = cameraPositon;
 
         for (int i = 1; i <= WorldData.FOVLevel.Count; i++) {

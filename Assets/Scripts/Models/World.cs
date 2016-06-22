@@ -32,9 +32,9 @@ public class World {
     }
 
     public Vector2 GetChunkIndex(Vector3 worldPosition) {
-        return new Vector2(Mathf.RoundToInt(worldPosition.x/_worldData.ChunkSizeX), Mathf.RoundToInt(worldPosition.z/_worldData.ChunkSizeY));
 
-        
+        return new Vector2(Mathf.Floor(worldPosition.x/_worldData.ChunkSizeX), Mathf.Floor(worldPosition.z/_worldData.ChunkSizeY));
+
     }
 
     /// <summary>
@@ -45,14 +45,11 @@ public class World {
     public void BuildChunk(Vector2 position, int levelOfDetail) {
         Vector3 fixedPosition = new Vector3(position.x, 0, position.y);
         Vector2 chunkIndex = GetChunkIndex(fixedPosition);
-
+        //Debug.Log(chunkIndex);
         if (_thisUpdatedChunks.ContainsKey(chunkIndex)) return;
 
         Vector3 chunkPosition = new Vector3(( + chunkIndex.x) * _worldData.ChunkSizeX , 0 , ( chunkIndex.y) * _worldData.ChunkSizeY ); 
         Chunk chunk;
-
-
-
 
         if (!_chunksDictionary.TryGetValue(chunkIndex, out chunk)) {
 
