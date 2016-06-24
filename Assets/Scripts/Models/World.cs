@@ -62,7 +62,7 @@ public class World {
             GameObject o = (GameObject) GameObject.Instantiate(_chunkPrefab, chunkPosition, Quaternion.identity);
             o.transform.parent = _worldData.TerrainController.transform;
 
-            chunk = new Chunk(o, new ChunkData(_worldData, position,noiseMap, meshConfig));
+            chunk = new Chunk(o, new ChunkData( position,noiseMap, meshConfig), _worldData);
 
 
 

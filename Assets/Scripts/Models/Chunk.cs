@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 using System.Collections;
 
 
@@ -15,9 +16,9 @@ public class Chunk {
 
     private readonly float[,] NoiseMap;
 
-    public Chunk(GameObject o, ChunkData data) {
+    public Chunk(GameObject o, ChunkData data, WorldData worldData) {
         _chunkGameObject = o;
-        _worldData = data._worldData;
+        _worldData = worldData;
         _position = data.Position;
         NoiseMap = data.NoiseMap;
         _meshConfig = data.MeshConfig;
@@ -26,7 +27,7 @@ public class Chunk {
     }
 
     public ChunkData GetChunkData() {
-        return new ChunkData(_worldData,_position,NoiseMap,_meshConfig);
+        return new ChunkData(_position,NoiseMap,_meshConfig);
     }
 
     public bool IsActive() {
@@ -57,14 +58,13 @@ public class Chunk {
     }
 }
 
+[Serializable]
 public struct ChunkData {
-    public readonly WorldData _worldData;
     public Vector3 Position;
     public float[,] NoiseMap;
     public MeshConfig MeshConfig;
 
-    public ChunkData(WorldData _worldData, Vector3 position, float[,] noiseMap, MeshConfig meshConfig) {
-        this._worldData = _worldData;
+    public ChunkData( Vector3 position, float[,] noiseMap, MeshConfig meshConfig) {
         Position = position;
         NoiseMap = noiseMap;
         MeshConfig = meshConfig;
