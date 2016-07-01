@@ -21,7 +21,7 @@ public class TerrainGenerator {
     static void MeshThread(MeshConfig config, Action<MeshData> callback) {
 
         MeshData meshdata = GenerateTerrainMeshData(config);
-        World.OnReceiveMeshData(new KeyValuePair<MeshData, Action<MeshData>>(meshdata,callback));
+        World.OnReceiveMeshData(new KeyValuePair<MeshData, Action<MeshData>>(meshdata, callback));
 
     }
 
@@ -31,7 +31,7 @@ public class TerrainGenerator {
     }
 
     public static MeshData GenerateTerrainMeshData(MeshConfig config) {
-        
+
         List<Vector3> vectices;
         int[] triangles;
         List<Vector2> uvs;
@@ -42,21 +42,21 @@ public class TerrainGenerator {
         /*
         / create vectices base on noiseMap
         */
-        bool valid = config.SizeX%config.LevelOfDetail == 0 && config.SizeY%config.LevelOfDetail == 0;
+        bool valid = config.SizeX % config.LevelOfDetail == 0 && config.SizeY % config.LevelOfDetail == 0;
         Assert.IsTrue(valid);
         if (!valid) {
             config.LevelOfDetail = 1;
         }
 
-        
+
 
         int vectexPerRow = config.SizeX / config.LevelOfDetail + 1;
         int vectexPerCol = config.SizeY / config.LevelOfDetail + 1;
         vectices = new List<Vector3>(vectexPerRow * vectexPerCol);
         for (int y = 0; y < vectexPerCol; y++) {
             for (int x = 0; x < vectexPerRow; x++) {
-            
-                Vector3 vectex = new Vector3(fixX + x * config.LevelOfDetail, 
+
+                Vector3 vectex = new Vector3(fixX + x * config.LevelOfDetail,
                                             config.NoiseMap[x * config.LevelOfDetail, y * config.LevelOfDetail] * config.HeightMultiplier,
                                             fixZ + -y * config.LevelOfDetail); //since the 3D Gizmos defines y to be the raised-up
                 vectices.Add(vectex);
@@ -68,7 +68,7 @@ public class TerrainGenerator {
 
         int trianglesPerRow = (vectexPerRow - 1) * 2; //each vectex repersent a square, each square represent 2 triangles
 
-        triangles = new int[trianglesPerRow * (vectexPerCol - 1)* 3]; // each triangles composed by three vectices
+        triangles = new int[trianglesPerRow * (vectexPerCol - 1) * 3]; // each triangles composed by three vectices
 
         int count = 0;
 
@@ -96,7 +96,7 @@ public class TerrainGenerator {
         for (int i = 0; i < vectices.Count; i++) {
             uvs.Add(new Vector2(vectices[i].x, vectices[i].z));
         }
-        return new MeshData(vectices,triangles,uvs);
+        return new MeshData(vectices, triangles, uvs);
     }
 
 

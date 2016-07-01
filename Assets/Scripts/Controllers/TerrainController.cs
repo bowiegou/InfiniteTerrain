@@ -23,23 +23,23 @@ public class TerrainController : MonoBehaviour {
     private Vector2 _lastCameraPosition;
 
 
-	// Use this for initialization
-	void Start () {
-	    WorldData.TerrainController = this;
+    // Use this for initialization
+    void Start() {
+        WorldData.TerrainController = this;
         _world = new World(WorldData);
         _lastCameraPosition = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.z);
-        _lastCameraPosition = new Vector2(Mathf.Infinity,Mathf.Infinity);
+        _lastCameraPosition = new Vector2(Mathf.Infinity, Mathf.Infinity);
     }
-	
-	// Update is called once per frame
-	void Update () {
+
+    // Update is called once per frame
+    void Update() {
         UpdateChunk();
-	}
+    }
 
     void UpdateChunk() {
         Vector2 cameraPositon = new Vector2(Camera.main.transform.position.x, Camera.main.transform.position.z);
-        
-        if ( (cameraPositon - _lastCameraPosition).SqrMagnitude() < WorldData.ChunkSizeX / 2) {
+
+        if ((cameraPositon - _lastCameraPosition).SqrMagnitude() < WorldData.ChunkSizeX / 2) {
 
             return;
         }
@@ -49,7 +49,7 @@ public class TerrainController : MonoBehaviour {
         for (int i = 1; i <= WorldData.FOVLevel.Count; i++) {
             for (int x = -WorldData.ChunkSizeX * i; x <= WorldData.ChunkSizeX * i; x += WorldData.ChunkSizeX) {
                 for (int y = -WorldData.ChunkSizeY * i; y <= WorldData.ChunkSizeY * i; y += WorldData.ChunkSizeY) {
-                    _world.BuildChunk(new Vector2(cameraPositon.x + x, cameraPositon.y + y), WorldData.FOVLevel[i  - 1]);
+                    _world.BuildChunk(new Vector2(cameraPositon.x + x, cameraPositon.y + y), WorldData.FOVLevel[i - 1]);
                 }
             }
 
@@ -75,12 +75,12 @@ public class TerrainController : MonoBehaviour {
 
     public void DebugChunk() {
         if (DebugObject == null) return;
-                DebugNoiseData = new NoiseConfig(WorldData.NoiseScale, WorldData.NoiseSeed, WorldData.NoiseOctaves, WorldData.NoisePersistance, WorldData.NoiseLacunarity);
-                float[,] noiseMap = NoiseGenerator.GenerateNoise(WorldData.SizeX, WorldData.SizeY, DebugNoiseData, DebugOffsetX, DebugOffsetY);
-                MeshConfig meshConfig = new MeshConfig(WorldData.ChunkSizeX, WorldData.ChunkSizeY, noiseMap);
-                Mesh mesh = TerrainGenerator.GenerateTerrainMesh(meshConfig);
-                DebugObject.GetComponent<ChunkController>().SetMesh(mesh);
-                DebugObject.SetActive(true);
+        DebugNoiseData = new NoiseConfig(WorldData.NoiseScale, WorldData.NoiseSeed, WorldData.NoiseOctaves, WorldData.NoisePersistance, WorldData.NoiseLacunarity);
+        float[,] noiseMap = NoiseGenerator.GenerateNoise(WorldData.SizeX, WorldData.SizeY, DebugNoiseData, DebugOffsetX, DebugOffsetY);
+        MeshConfig meshConfig = new MeshConfig(WorldData.ChunkSizeX, WorldData.ChunkSizeY, noiseMap);
+        Mesh mesh = TerrainGenerator.GenerateTerrainMesh(meshConfig);
+        DebugObject.GetComponent<ChunkController>().SetMesh(mesh);
+        DebugObject.SetActive(true);
     }
 
     void OnValidate() {
@@ -92,27 +92,27 @@ public class TerrainController : MonoBehaviour {
             WorldData.SizeX = 1;
         }
 
-        if(WorldData.NoiseScale < 1) {
+        if (WorldData.NoiseScale < 1) {
             WorldData.NoiseScale = 1;
         }
 
-        if(WorldData.NoiseOctaves < 1) {
+        if (WorldData.NoiseOctaves < 1) {
             WorldData.NoiseOctaves = 1;
         }
 
-        if(WorldData.NoiseSeed < 1) {
+        if (WorldData.NoiseSeed < 1) {
             WorldData.NoiseSeed = 1;
         }
 
-        if(WorldData.NoisePersistance < 0) {
+        if (WorldData.NoisePersistance < 0) {
             WorldData.NoisePersistance = 0.0001f;
-        } else if(WorldData.NoisePersistance > 1) {
+        } else if (WorldData.NoisePersistance > 1) {
             WorldData.NoisePersistance = 0.9999f;
         }
 
-        if(WorldData.NoiseLacunarity < 1) {
+        if (WorldData.NoiseLacunarity < 1) {
             WorldData.NoiseLacunarity = 1;
         }
-        
+
     }
 }

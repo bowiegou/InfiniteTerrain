@@ -25,7 +25,7 @@ public class World {
         _meshGenerationQueue = new Queue<KeyValuePair<MeshData, Action<MeshData>>>();
     }
 
-    public World(WorldData data,Dictionary<Vector2, Chunk> chunksDictionary) {
+    public World(WorldData data, Dictionary<Vector2, Chunk> chunksDictionary) {
         _chunksDictionary = chunksDictionary;
         _worldData = data;
         _chunkPrefab = data.TerrainController.ChunkPrefab;
@@ -33,7 +33,7 @@ public class World {
 
     public Vector2 GetChunkIndex(Vector3 worldPosition) {
 
-        return new Vector2(Mathf.Floor(worldPosition.x/_worldData.ChunkSizeX), Mathf.Floor(worldPosition.z/_worldData.ChunkSizeY));
+        return new Vector2(Mathf.Floor(worldPosition.x / _worldData.ChunkSizeX), Mathf.Floor(worldPosition.z / _worldData.ChunkSizeY));
 
     }
 
@@ -48,7 +48,7 @@ public class World {
         //Debug.Log(chunkIndex);
         if (_thisUpdatedChunks.ContainsKey(chunkIndex)) return;
 
-        Vector3 chunkPosition = new Vector3(( + chunkIndex.x) * _worldData.ChunkSizeX , 0 , ( chunkIndex.y) * _worldData.ChunkSizeY ); 
+        Vector3 chunkPosition = new Vector3((+chunkIndex.x) * _worldData.ChunkSizeX, 0, (chunkIndex.y) * _worldData.ChunkSizeY);
         Chunk chunk;
 
         if (!_chunksDictionary.TryGetValue(chunkIndex, out chunk)) {
@@ -56,34 +56,33 @@ public class World {
             NoiseConfig noiseData = new NoiseConfig(_worldData.NoiseScale, _worldData.NoiseSeed,
                 _worldData.NoiseOctaves, _worldData.NoisePersistance, _worldData.NoiseLacunarity);
             float[,] noiseMap = NoiseGenerator.GenerateNoise(_worldData.ChunkSizeX, _worldData.ChunkSizeY, noiseData,
-                chunkPosition.x, -chunkPosition.z );
-            MeshConfig meshConfig = new MeshConfig(_worldData.ChunkSizeX, _worldData.ChunkSizeY, noiseMap, levelOfDetail,_worldData.HeightMultiplier);
+                chunkPosition.x, -chunkPosition.z);
+            MeshConfig meshConfig = new MeshConfig(_worldData.ChunkSizeX, _worldData.ChunkSizeY, noiseMap, levelOfDetail, _worldData.HeightMultiplier);
 
-            GameObject o = (GameObject) GameObject.Instantiate(_chunkPrefab, chunkPosition, Quaternion.identity);
+            GameObject o = (GameObject)GameObject.Instantiate(_chunkPrefab, chunkPosition, Quaternion.identity);
             o.transform.parent = _worldData.TerrainController.transform;
 
-            chunk = new Chunk(o, new ChunkData( position,noiseMap, meshConfig), _worldData);
+            chunk = new Chunk(o, new ChunkData(position, noiseMap, meshConfig), _worldData);
 
 
 
-            TerrainGenerator.GenerateTerrainMeshInBackground(meshConfig,chunk.onReceiveMeshData);
+            TerrainGenerator.GenerateTerrainMeshInBackground(meshConfig, chunk.onReceiveMeshData);
 
             _chunksDictionary.Add(chunkIndex, chunk);
-        }
-        else {
+        } else {
             _lastUpdatedChunks.Remove(chunkIndex);
             chunk.UpdateChunk(levelOfDetail);
 
         }
 
-            _thisUpdatedChunks.Add(chunkIndex,chunk);
+        _thisUpdatedChunks.Add(chunkIndex, chunk);
 
     }
 
 
     private void CleanUpLastChunks() {
         foreach (KeyValuePair<Vector2, Chunk> chunk in _lastUpdatedChunks) {
-                chunk.Value.SetActive(false);
+            chunk.Value.SetActive(false);
         }
         _lastUpdatedChunks.Clear();
         foreach (KeyValuePair<Vector2, Chunk> chunk in _thisUpdatedChunks) {
@@ -95,11 +94,11 @@ public class World {
     private static void UpdateMesh() {
         lock (_meshGenerationQueue) {
             while (_meshGenerationQueue.Count > 0) {
-            KeyValuePair<MeshData, Action<MeshData>> key =
-                _meshGenerationQueue.Dequeue();
+                KeyValuePair<MeshData, Action<MeshData>> key =
+                    _meshGenerationQueue.Dequeue();
                 key.Value(key.Key);
             }
-    }
+        }
     }
 
 
@@ -112,7 +111,7 @@ public class World {
         UpdateMesh();
     }
 
-    public static void OnReceiveMeshData(KeyValuePair<MeshData,Action<MeshData>> key) {
+    public static void OnReceiveMeshData(KeyValuePair<MeshData, Action<MeshData>> key) {
         lock (_meshGenerationQueue) {
             _meshGenerationQueue.Enqueue(key);
         }

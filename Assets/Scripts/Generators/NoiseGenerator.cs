@@ -6,7 +6,7 @@ public class NoiseGenerator {
 
 
     public static float[,] GenerateNoise(int sizeX, int sizeY, NoiseConfig data, float offsetX = 0, float offsetY = 0) {
-        return NoiseGenerator.GenerateNoise(sizeX, sizeY, data.Scale, data.Seed, data.Octaves, data.Persistance, data.Lacunarity,offsetX,offsetY);
+        return NoiseGenerator.GenerateNoise(sizeX, sizeY, data.Scale, data.Seed, data.Octaves, data.Persistance, data.Lacunarity, offsetX, offsetY);
     }
 
     public static float[,] GenerateNoise(int sizeX, int sizeY, float scale, int seed, int octaves = 5, float persistance = 0.5f, float lacunarity = 1.5f, float offsetX = 0, float offsetY = 0) {
@@ -20,7 +20,7 @@ public class NoiseGenerator {
         float amplitude = 1;
 
         for (int i = 0; i < octaves; i++) {
-            octaveOffset[i].Set(ran.Next(-10000,10000) + offsetX, ran.Next(-10000,10000) + offsetY);
+            octaveOffset[i].Set(ran.Next(-10000, 10000) + offsetX, ran.Next(-10000, 10000) + offsetY);
             maxPossibleHeight += amplitude;
             amplitude *= persistance;
         }
@@ -48,7 +48,7 @@ public class NoiseGenerator {
 
                     amplitude *= persistance;
                     frequency *= lacunarity;
-                    
+
 
                 }
 

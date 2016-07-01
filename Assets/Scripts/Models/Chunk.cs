@@ -27,7 +27,7 @@ public class Chunk {
     }
 
     public ChunkData GetChunkData() {
-        return new ChunkData(_position,NoiseMap,_meshConfig);
+        return new ChunkData(_position, NoiseMap, _meshConfig);
     }
 
     public bool IsActive() {
@@ -42,9 +42,9 @@ public class Chunk {
         if (levelOfDetail != this._meshConfig.LevelOfDetail) {
 
             this._meshConfig.LevelOfDetail = levelOfDetail;
-           // Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseMap,levelOfDetail);
+            // Mesh mesh = TerrainGenerator.GenerateTerrainMesh(_worldData.ChunkSizeX, _worldData.ChunkSizeY, NoiseMap,levelOfDetail);
             //_chunkController.SetMesh(mesh);
-            TerrainGenerator.GenerateTerrainMeshInBackground(_meshConfig,this.onReceiveMeshData);
+            TerrainGenerator.GenerateTerrainMeshInBackground(_meshConfig, this.onReceiveMeshData);
             //Debug.Log("Reset Mesh Done");
         }
         _chunkGameObject.SetActive(true);
@@ -64,7 +64,7 @@ public struct ChunkData {
     public float[,] NoiseMap;
     public MeshConfig MeshConfig;
 
-    public ChunkData( Vector3 position, float[,] noiseMap, MeshConfig meshConfig) {
+    public ChunkData(Vector3 position, float[,] noiseMap, MeshConfig meshConfig) {
         Position = position;
         NoiseMap = noiseMap;
         MeshConfig = meshConfig;
